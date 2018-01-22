@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Cors.Infrastructure;
+using Planets;
 
-namespace ModularAPI
+namespace ApiGateway
 {
     public class Startup
     {
@@ -23,17 +21,33 @@ namespace ModularAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc().AddJsonOptions(options =>
+            {
+                var settings = options.SerializerSettings;
+                settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            });
+
+            var corsBuilder = new CorsPolicyBuilder();
+            corsBuilder.AllowAnyHeader();
+            corsBuilder.AllowAnyMethod();
+            corsBuilder.AllowAnyOrigin();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AnyCorsPolicy", corsBuilder.Build());
+            });
+
+            // Custom services
+            services.AddScoped<PlanetsComponent, PlanetsComponentImpl>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            loggerFactory.AddDebug();
+            loggerFactory.AddSerilog();
 
+            app.UseExceptionHandler();
             app.UseMvc();
         }
     }

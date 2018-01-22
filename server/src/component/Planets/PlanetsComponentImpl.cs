@@ -3,9 +3,20 @@ using System;
 
 namespace Planets
 {
-    public interface PlanetsComponent
+    internal class PlanetsComponentImpl : PlanetsComponent
     {
-        JToken GetAllPlanets();
-        JToken GetPlanetById(int id);
+        public PlanetsComponentImpl(IDynamoDbService dynamoDbService)
+        {
+
+        }
+        public JToken GetAllPlanets()
+        {
+            throw new NotImplementedException();
+        }
+
+        public JToken GetPlanetById(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

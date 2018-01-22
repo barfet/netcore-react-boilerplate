@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ModularAPI.Controllers
 {
     [Route("api/[controller]")]
-    public class ValuesController : Controller
+    public class PlanetsController : Controller
     {
         // GET api/values
         [HttpGet]
